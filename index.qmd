@@ -41,6 +41,7 @@ top_cats_freq <- top_cats_tidy |>
 print(top_cats_freq)
 ```
 
+
 ```{r}
 top_dogs_tidy <- top_dogs_urls |> 
   unnest_tokens(word, text) |> 
@@ -56,12 +57,22 @@ print(top_dogs_freq)
 
 4. 
 ```{r}
-text <- c("I naturally brush my hands together after giving treats to get the crumbs off,", "and now we can use that same gesture and “all done” to signal the end of anything.","Play time, brushing, getting goo out of her eyes. It’s adorable.")
+user <- "MheTusician"
+reddit_user <- get_user_content(user)
 ```
 
+
 ```{r}
-text_df <- tibble(line = 1:3, text = text)
-text_df %>%
-  unnest_tokens(word, text)
+comments <- reddit_user[[user]]$comments
+
+comments_tidy <- comments |> 
+  unnest_tokens(word, comment) |> 
+  anti_join(stop_words)
+
+comments_freq <- comments_tidy |> 
+  group_by(thread_title) |> 
+  count(word, sort=TRUE)
+
+print(comments_freq)
 ```
 
