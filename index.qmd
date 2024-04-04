@@ -2,10 +2,66 @@
 title: "nguyen.github.io"
 ---
 
-This is a Quarto website.
-
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
 
 ```{r}
-1 + 1
+library(RedditExtractoR) 
+library(readr)
+library(dplyr)
+library(tidyverse)
+library(tidytext)
 ```
+
+3.
+```{r}
+# this code will run when rendering to read in the rds file
+top_cats_urls <- read_rds("top_cats_urls.rds")
+top_dogs_urls <- read_rds("top_dogs_urls.rds")
+```
+
+2.
+```{r}
+#| eval: false
+top_cats_urls <- find_thread_urls(subreddit="cats", sort_by="top")
+```
+
+```{r}
+#| eval: false
+top_dogs_urls <- find_thread_urls(subreddit="dogs", sort_by="top")
+```
+
+```{r}
+top_cats_tidy <- top_cats_urls |> 
+  unnest_tokens(word, text) |> 
+  anti_join(stop_words)
+
+top_cats_freq <- top_cats_tidy |> 
+  group_by(title) |> 
+  count(word, sort=TRUE)
+
+print(top_cats_freq)
+```
+
+```{r}
+top_dogs_tidy <- top_dogs_urls |> 
+  unnest_tokens(word, text) |> 
+  anti_join(stop_words) 
+
+top_dogs_freq <- top_dogs_tidy |> 
+  group_by(title) |> 
+  count(word, sort=TRUE)
+
+print(top_dogs_freq)
+```
+
+
+4. 
+```{r}
+text <- c("I naturally brush my hands together after giving treats to get the crumbs off,", "and now we can use that same gesture and “all done” to signal the end of anything.","Play time, brushing, getting goo out of her eyes. It’s adorable.")
+```
+
+```{r}
+text_df <- tibble(line = 1:3, text = text)
+text_df %>%
+  unnest_tokens(word, text)
+```
+
